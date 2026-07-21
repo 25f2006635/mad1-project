@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+<div class="container">
+    <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
+    <div style="display: flex; justify-content: space-between;">
+        <span style="text-align: left; color: cornsilk; font-size: 20px;" >Hello, Admin!</span> 
+        <span style="text-align: right;"><input type="text" name="searchtxt" placeholder="Search Treks, Staff or Users..." width: 500px> <input type="button" value="Search"> | <a href="login.html" >Logout</a></span>
+    </div>
+        <h2 class="heading">Admin Dashboard</h2>
+        <br>                    
+    <div style="display: flex;" >
+        
+        <div class="sidebar" >
+            <a href="admin_dash.html" class="normal-text-link">Dashboard</a><br>
+            <a href="admin_dash.html" class="normal-text-link">Manage Treks</a><br>
+            <a href="admin_dash.html" class="normal-text-link">Manage Staff</a><br>
+            <a href="admin_dash.html" class="normal-text-link">Manage Users</a><br>
+            <a href="admin_dash.html" class="normal-text-link">Dashboard</a>
+           
+        </div>
+
+        <div class="dash_style">
+        <table class="table" >
+            <tr><th>Total Treks</th><th>Total Users</th><th>Total Staff</th><th>Total Bookings</th></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>86</td></tr>
+        </table>
+        <br>
+        <table class="table"  name="Recent Treks">
+            <caption >
+                <div style="display: flex; justify-content: space-between; width: 100%">
+                    <span style="text-align: left">Manage Treks</span> <span style="text-align:right;"><input type="button" value="Add Trek"></span>
+                </div>
+            </caption>  
+            <tr><th>Trek Name</th><th>Location</th><th>Staff Assigned</th><th>Status</th><th>Action</th></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>86</td><td><input type="button" value="Edit"><input type="button" value="Delete"></td></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>86</td><td><input type="button" value="Edit"><input type="button" value="Delete"></td></tr>
+        </table>
+        <br>
+        <table class="table"  name="Staff Approval" >
+            <caption>Pending Staff Approval</caption> <br>
+            <tr><th>Name</th><th>Contact</th><th>Status</th><th>Action</th></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td><input type="button" value="Approve"><input type="button" value="Reject"><input type="button" value="Blacklist"></td></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td><input type="button" value="Approve"><input type="button" value="Reject"><input type="button" value="Blacklist"></td></tr>
+        </table>
+        <br>
+        <table class="table"  name="Users" >
+            <caption>Users</caption> 
+            <tr><th>User ID</th><th>Name</th><th>Contact</th><th>Status</th><th>Action</th></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>9</td><td><input type="button" value="Blacklist"></td></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>9</td><td><input type="button" value="Blacklist"></td></tr>
+        </table>
+        </div>
+        
+    </div>
+    <div class="center">
+        <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+    </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,76 @@
+.container{
+    background-color:cadetblue;
+    border: 2px solid black;
+}
+
+
+
+.heading{text-align: center;
+    margin: auto;
+    color: rgb(218, 180, 123) ;
+}
+
+.center{
+    text-align: center;
+    margin: auto;
+    color: whitesmoke ;
+}
+
+.form_style{
+    border: 1px solid slategrey;
+    width: 500px;
+    height: 400px;
+    margin: auto;
+    border-radius: 10px;
+    font-size: 20px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align:justify;
+}
+
+.dash_style{
+    width: 80%;
+    border: 1px solid slategrey;
+    margin: auto;
+    border-radius: 10px;
+    font-size: 18px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align:justify;
+}
+
+.sidebar{
+    width: 20%;
+    border: 1px solid slategrey;
+    margin: auto;
+    margin-top: 0%;
+    border-radius: 10px;
+    font-size: 18px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align:justify;
+    padding: 20px;
+}
+
+.table{
+    border-spacing: 0;
+
+    border: 1px solid rgb(217, 226, 235);
+    margin: auto;
+    border-radius: 2px;
+    font-size: 14px;
+    color: bisque;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align:center;
+
+}
+
+
+.table th,
+.table td{
+    border: 1px solid rgb(217, 226, 235);
+    font-size: 12px 18px;
+    padding: 5px;
+}
+ 
+.normal-text-link {
+  color:rgb(246, 181, 181);           
+  text-decoration: none;
+}
