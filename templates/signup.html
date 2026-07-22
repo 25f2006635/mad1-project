@@ -1,4 +1,4 @@
-{% block content %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,27 +15,30 @@
         <form>
         <h3 class="heading">Sign Up Here</h3>
         <table class="center">
-        <tr><td><label>Full Name: </label> </td><td><input type="text" name = "fname"></td></tr>
-        <tr><td><label>Email ID: </label></td><td> <input type="email" name = "emailid"></td></tr>
-        <tr><td><label>Address: </label></td><td><textarea name="address" id="add" cols="20" rows="5"></textarea></td></tr>
-        <tr><td><label>User Type: </label></td>
+            <tr><td><label>User Type: </label></td>
             <td> 
                <select name="utype">
                   <option value="Select User Type" disabled selected>Select User Type</option>
-                  <option value="Admin">Admin</option>
                   <option value="Trek Staff">Trek Staff</option>
                   <option value="User(Trekker)">User(Trekker)</option>
 
                </select>
             </td>
             <tr><br>
+        <tr><td><label>Full Name: </label> </td><td><input type="text" name = "fname"></td></tr>
+        <tr><td><label>Email ID: </label></td><td> <input type="email" name = "emailid"></td></tr>
+        <tr><td><label>Password: </label></td><td><input type="password" name = "pwd"></td></tr>
+        <tr><td><label>Address: </label></td><td><textarea name="address" id="add" cols="20" rows="5"></textarea></td></tr>
+        
         <tr><td><input type="submit" value="Signup"></td><td><a href="login.html">Login</a></td></tr>
         </table>
         
         </form>
     </div>
+    <div class="center">
+        <h5>&copy; copyrights reserved to Trekkmaster, 2026</h5>
+    </div>
 </div>
 </body>
 </html>
 
-{% endblock %}

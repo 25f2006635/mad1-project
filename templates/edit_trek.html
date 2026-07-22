@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Edit Trek</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div class="form_style"; style="width: 80%;">
+            <form >
+                <h3 class="heading">Edit Trek</h3>
+                <div style="display: flex; padding-top: 18px;">
+                    <div class="form_style"; style="height: 350px;"> 
+                        <table class="center">
+                            <tr><td> <label for="Trek Name">Trek Name :</label></td> <td><input type="text" name = "trek_name"></td></tr>
+                            <tr><td> <label for="Location">Location :</label></td> <td><input type="text" name = "locn"></td></tr>
+                            <tr><td><label>Difficulty :</label></td>
+                                <td>
+                                    <select name="diff">
+                                       <option value="--Select--" disabled selected>--Select--</option>
+                                       <option value="Easy">Easy</option>
+                                       <option value="Moderate">Moderate</option>
+                                       <option value="Hard">Hard</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr><td> <label for="Duration">Duration (Days) :</label></td> <td><input type="text" name = "durn"></td></tr>
+                            <tr><td> <label for="Available Slots">Available Slots :</label></td> <td><input type="text" name = "av_slots"></td></tr>        
+                        </table>                     
+                    </div>
+                    <div class="form_style"; style="height: 350px;">
+                       <table class="center">
+                        <tr><td> <label for="Start Date">Start Date :</label></td> <td><input type="date" name = "st_date"></td></tr>
+                        <tr><td> <label for="End Date">End Date :</label></td> <td><input type="date" name = "en_date"></td></tr>
+                        <tr><td><label>Assign Staff :</label></td>
+                                <td>
+                                    <select name="select staff">
+                                       <option value="--Select--" disabled selected>--Select Staff--</option>
+                                       <option value="Easy">Easy</option>
+                                       <option value="Moderate">Moderate</option>
+                                       <option value="Hard">Hard</option>
+                                    </select>
+                                </td>
+                        </tr>
+                        <tr><td><label>Status :</label></td>
+                                <td>
+                                    <select name="status">
+                                       <option value="--Select--" disabled selected>--Select Status--</option>
+                                       <option value="Open">Open</option>
+                                       <option value="Closed">Closed</option>
+                                       <option value="Completed">Completed</option>
+                                    </select>
+                                </td>
+                        </tr>
+                        <tr><td><label>Description: </label></td><td><textarea name="desn" id="add" cols="20" rows="5"></textarea></td></tr>
+                        <tr>
+                            <td><td><button id="button" type="button" onclick="window.location.href='admin_dash.html'">Cancel </button></td></td>
+                            <td><td><button id="button" type="button" onclick="window.location.href='manage_treks.html'">Save </button></td></td>
+                        </tr>
+                       </table>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="center">
+            <h5>&copy; copyrights reserved to Trekkmaster, 2026</h5>
+        </div>
+    </div>
+</body>
+
+</html>
