@@ -12,15 +12,15 @@
 <div class="container">
     <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
     <div class="form_style">
-        <form>
+        <form action="/signup" method="POST">
         <h3 class="heading">Sign Up Here</h3>
         <table class="center">
             <tr><td><label>User Type: </label></td>
             <td> 
                <select name="utype">
-                  <option value="Select User Type" disabled selected>Select User Type</option>
-                  <option value="Trek Staff">Trek Staff</option>
-                  <option value="User(Trekker)">User(Trekker)</option>
+                  <option value="None" disabled selected>Select User Type</option>
+                  <option value="1">Trek Staff</option>
+                  <option value="2">User(Trekker)</option>
 
                </select>
             </td>
@@ -32,7 +32,7 @@
         
         <tr><td><input type="submit" value="Signup"></td><td><a href="login.html">Login</a></td></tr>
         </table>
-        
+        <h6>{{error}}</h6>
         </form>
     </div>
     <div class="center">
