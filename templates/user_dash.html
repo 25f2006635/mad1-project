@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>User Dashboard</title>
+</head>
+<body>
+<div class="container">
+    <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
+    <div style="display: flex; justify-content: space-between;">
+        <span style="text-align: left; color: cornsilk; font-size: 20px;" >Hello, Dear User!</span> 
+        <span style="text-align: right;"><input type="text" name="searchtxt" placeholder="Search Treks, Staff or Users..." width: 500px> <input type="button" value="Search"> | <a href="login.html" >Logout</a></span>
+    </div>
+        <h2 class="heading" >User Dashboard</h2>
+        <br>                    
+    <div style="display: flex;" >
+        
+        <div class="sidebar" >
+            <a href="admin_dash.html" class="normal-text-link">Dashboard</a><br>
+            <a href="admin_dash.html" class="normal-text-link">Browse Treks</a><br>
+            <a href="admin_dash.html" class="normal-text-link">My Bookings</a><br>
+            <a href="admin_dash.html" class="normal-text-link">History</a><br>
+            <a href="admin_dash.html" class="normal-text-link">My Profile</a>
+            <a href="admin_dash.html" class="normal-text-link">Logout</a>
+           
+        </div>
+
+        <div class="dash_style">
+        
+        <table class="table"  name="Recent Treks">
+            <caption >
+                <div style="display: flex; justify-content: space-between; width: 100%">
+                    <span style="text-align: left">Available Treks </span>
+                    <span style="text-align:right;">
+                        <label for="Location">
+                            <select id="location" name="locn">                                    
+                                <option value="Location: All" disabled selected>Location: All</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Moderate">Moderate</option>
+                                <option value="Hard">Hard</option>
+                            </select>                              
+                        </label>
+                    </span>
+                    <span style="text-align:right;">
+                        <label for="Difficulty">
+                            <select id="difficulty" name="diff">                                    
+                                <option value="Difficulty: All" disabled selected>Difficulty: All</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Moderate">Moderate</option>
+                                <option value="Hard">Hard</option>
+                            </select>                              
+                        </label>
+                    </span>
+                    
+                </div>
+            </caption>  
+            <tr><th>Trek Name</th><th>Location</th><th>Difficulty</th><th>Duration</th><th>Available Slots</th><th>Action</th></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>86</td><td>86</td><td><a href="{{ url_for('staff_signin') }}"><button type="button">Book Now</button></a></td></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td>86</td><td>86</td><td><a href="{{ url_for('staff_signin') }}"><button type="button">Book Now</button></a></td></tr>
+        </table>
+        <br>
+        <table class="table"  name="Staff Approval" >
+            <caption style="text-align: left">My Bookings</caption> <br>
+            <tr><th>Trek Name</th><th>Booking Date</th><th>Status</th><th>Action</th></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td><a href="{{ url_for('staff_signin') }}"><button type="button">View Details</button></a></td></tr>
+            <tr><td>12</td><td>48</td><td>9</td><td><a href="{{ url_for('staff_signin') }}"><button type="button">View Details</button></a></td></tr>
+        </table>
+      
+        </div>
+        
+    </div>
+    <div class="center">
+        <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+    </div>
+</div>
+</body>
+</html>
+

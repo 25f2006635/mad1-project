@@ -1,76 +1,99 @@
-.container{
-    background-color:cadetblue;
+.container {
+    background-color: cadetblue;
     border: 2px solid black;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 100vh;
 }
 
 
 
-.heading{text-align: center;
-    margin: auto;
-    color: rgb(218, 180, 123) ;
-}
-
-.center{
+.heading {
     text-align: center;
     margin: auto;
-    color: whitesmoke ;
+    color: rgb(218, 180, 123);
 }
 
-.form_style{
+.center {
+    text-align: center;
+    margin: auto;
+    color: whitesmoke;
+}
+
+.form_style {
     border: 1px solid slategrey;
     width: 500px;
     height: 400px;
     margin: auto;
     border-radius: 10px;
     font-size: 20px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-align:justify;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: justify;
 }
 
-.dash_style{
+.dash_style {
     width: 80%;
     border: 1px solid slategrey;
     margin: auto;
     border-radius: 10px;
     font-size: 18px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-align:justify;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: justify;
 }
 
-.sidebar{
+.sidebar {
     width: 20%;
     border: 1px solid slategrey;
     margin: auto;
     margin-top: 0%;
     border-radius: 10px;
     font-size: 18px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-align:justify;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: justify;
     padding: 20px;
 }
 
-.table{
+.table {
     border-spacing: 0;
-
+    width: 80%;
     border: 1px solid rgb(217, 226, 235);
     margin: auto;
     border-radius: 2px;
     font-size: 14px;
     color: bisque;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-align:center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
 
 }
 
 
 .table th,
-.table td{
+.table td {
     border: 1px solid rgb(217, 226, 235);
     font-size: 12px 18px;
     padding: 5px;
 }
- 
+
 .normal-text-link {
-  color:rgb(246, 181, 181);           
-  text-decoration: none;
+    color: rgb(246, 181, 181);
+    text-decoration: none;
+}
+
+.button {
+    font-size: 16px;
+    background-color: rgb(243, 209, 154);
+    color: aliceblue;
+    border-color: aliceblue;
+    font-style: italic;
+}
+
+.single-metrics-card {
+    width: 150px;
+    justify-content: space-around;
+    background-color: rgba(30, 30, 30, 0.2);
+    border: 1px solid cadetblue;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: rgb(213, 227, 232);
 }

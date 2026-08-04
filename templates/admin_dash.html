@@ -1,69 +1,110 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/main.css">
     <title>Admin Dashboard</title>
 </head>
+
 <body>
-<div class="container">
-    <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
-    <div style="display: flex; justify-content: space-between;">
-        <span style="text-align: left; color: cornsilk; font-size: 20px;" >Hello, Admin!</span> 
-        <span style="text-align: right;"><input type="text" name="searchtxt" placeholder="Search Treks, Staff or Users..." width: 500px> <input type="button" value="Search"> | <a href="login.html" >Logout</a></span>
-    </div>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
         <h2 class="heading">Admin Dashboard</h2>
-        <br>                    
-    <div style="display: flex;" >
-        
-        <div class="sidebar" >
-            <a href="admin_dash.html" class="normal-text-link">Dashboard</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Manage Treks</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Manage Staff</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Manage Users</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Dashboard</a>
-           
-        </div>
-
-        <div class="dash_style">
-        <table class="table" >
-            <tr><th>Total Treks</th><th>Total Users</th><th>Total Staff</th><th>Total Bookings</th></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>86</td></tr>
-        </table>
         <br>
-        <table class="table"  name="Recent Treks">
-            <caption >
-                <div style="display: flex; justify-content: space-between; width: 100%">
-                    <span style="text-align: left">Manage Treks</span> <span style="text-align:right;"><button type="button" onclick="window.location.href='add_trek.html'">Add Trek</button></span>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+                <div style="display:flex; justify-content: center; gap:10px; margin-bottom: 10px; margin-top: 10px;">
+                    <div class="single-metrics-card">
+                        <h4>Total Treks</h4>
+                        <p>{{ total_treks }}</p>
+                    </div>
+                    <div class="single-metrics-card">
+                        <h4>Total Users</h4>
+                        <p>{{ total_users }}</p>
+                    </div>
+                    <div class="single-metrics-card">
+                        <h4>Total Staff</h4>
+                        <p>{{ total_staff }}</p>
+                    </div>
+                    <div class="single-metrics-card">
+                        <h4>Total Bookings</h4>
+                        <p>{{ total_bookings }}</p>
+                    </div>
+
                 </div>
-            </caption>  
-            <tr><th>Trek Name</th><th>Location</th><th>Staff Assigned</th><th>Status</th><th>Action</th></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>86</td><td><button type="button" onclick="window.location.href='edit_trek.html'">Edit</button><input type="button" value="Delete"></td></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>86</td><td><button type="button" onclick="window.location.href='edit_trek.html'">Edit</button><input type="button" value="Delete"></td></tr>
-        </table>
-        <br>
-        <table class="table"  name="Staff Approval" >
-            <caption>Pending Staff Approval</caption> <br>
-            <tr><th>Name</th><th>Contact</th><th>Status</th><th>Action</th></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td><input type="button" value="Approve"><input type="button" value="Reject"><input type="button" value="Blacklist"></td></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td><input type="button" value="Approve"><input type="button" value="Reject"><input type="button" value="Blacklist"></td></tr>
-        </table>
-        <br>
-        <table class="table"  name="Users" >
-            <caption>Users</caption> 
-            <tr><th>User ID</th><th>Name</th><th>Contact</th><th>Status</th><th>Action</th></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>9</td><td><input type="button" value="Blacklist"></td></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>9</td><td><input type="button" value="Blacklist"></td></tr>
-        </table>
-        </div>
-        
-    </div>
-    <div class="center">
-        <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
-    </div>
-</div>
-</body>
-</html>
 
+
+
+                <br>
+                <table class="table" name="Bookings">
+                    <caption style="font-size: 18px;">Recent Bookings</caption>
+                    {% for booking in recent_bookings %}
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>User Name</th>
+                        <th>Trek</th>
+                        <th>Booking Date</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>{{ booking.id }}</td>
+                        <td>{{ booking.trekker.name }}</td>
+                        <td>{{ booking.trek.trek_name }}</td>
+                        <td>{{ booking.booking_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if booking.status == 0 %}Booked
+                            {% elif booking.status == 1 %}Cancelled
+                            {% elif booking.status == 2 %}Completed
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No recent bookings found.</td>
+                    </tr>
+                    {% endfor %}
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="text-align: right; padding-top: 10px;">
+                                <a href="{{ url_for('manage_bookings') }}">View all Bookings</a>
+                            </td>
+                        </tr>
+                    </tfoot>
+
+                </table>
+
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

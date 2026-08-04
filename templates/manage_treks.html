@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Manage Treks</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Manage Treks</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+
+                <table class="table" name="Recent Treks" style="width: 90%;">
+                    <caption>
+                        <div style="display: flex; justify-content: space-between; width: 100%">
+                            <span style="text-align: left; font-size: 18px;">Recent Treks</span> <span
+                                style="text-align:right;"><a href="{{ url_for('add_trek') }}" class="button"><button
+                                        type="button">Add
+                                        Trek</button></a></span>
+                        </div>
+                    </caption>
+                    <tr>
+                        <th>Trek ID</th>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Difficulty</th>
+                        <th>Days</th>
+                        <th>Slots</th>
+                        <th>Staff Assigned</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for trek in recent_treks %}
+                    <tr>
+                        <td>{{ trek.trek_id }}</td>
+                        <td><strong>{{trek.trek_name}}</strong></td>
+                        <td>{{trek.location}}</td>
+                        <td>
+                            {% if trek.difficulty == 0 %}Easy
+                            {% elif trek.difficulty == 1 %}Moderate
+                            {% elif trek.difficulty == 2 %}Hard
+                            {% endif %}
+                        </td>
+                        <td>{{ trek.duration }}</td>
+                        <td>{{ trek.av_slots }}</td>
+                        <td>
+                            {% if trek.assigned_staff %}
+                            {{ trek.assigned_staff.full_name }}
+                            {% else %}
+                            <span>Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if trek.status == 0 %}Pending
+                            {% elif trek.status == 1 %}Open
+                            {% elif trek.status == 2 %}Closed
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_trek', trek_id=trek.trek_id) }}" class="button"><button
+                                    type="button">Edit</button></a>
+                            <a href="{{ url_for('manage_treks', removed_id=trek.trek_id) }}" class="button"><button
+                                    type="button">Remove</button></a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9">No active or recent treks found. Click "+ Add Trek" to create one.</td>
+                    </tr>
+
+                    {% endfor %}
+                </table>
+                <br>
+                <table class="table" name="Recent Treks" style="width: 90%;">
+                    <Caption style="font-size: 18px;">Trek History</Caption>
+                    <tr>
+                        <th>Trek ID</th>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Difficulty</th>
+                        <th>Days</th>
+                        <th>Slots</th>
+                        <th>Staff Assigned</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for trek in history_treks %}
+                    <tr>
+                        <td>{{ trek.trek_id }}</td>
+                        <td><strong>{{ trek.trek_name }}</strong></td>
+                        <td>{{ trek.location }}</td>
+                        <td>
+                            {% if trek.difficulty == 0 %}Easy
+                            {% elif trek.difficulty == 1 %}Moderate
+                            {% elif trek.difficulty == 2 %}Hard
+                            {% endif %}
+                        </td>
+                        <td>{{ trek.duration }}</td>
+                        <td>{{ trek.av_slots }}</td>
+                        <td>
+                            {% if trek.assigned_staff %}
+                            {{ trek.assigned_staff.full_name }}
+                            {% else %}
+                            None
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if trek.status == 3 %}Completed
+                            {% elif trek.status == 4 %}Removed
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if trek.status == 4 %}
+                            <a href="{{ url_for('manage_treks', restore_id=trek.trek_id) }}" class="button">
+                                <button type="button">Restore</button>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9">No historical treks found.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

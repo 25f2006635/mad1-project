@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Manage Bookings</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Manage Bookings</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+
+                <table class="table" name="Recent Treks">
+                    <caption style="font-size: 18px;">
+                        Active Bookings
+                    </caption>
+                    {% if active_bookings %}
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Trekker ID</th>
+                        <th>Trek ID</th>
+                        <th>Booking Date</th>
+                        <th>Booking Status</th>
+                        <th>Payment Status</th>
+                    </tr>
+                    {% for b in active_bookings %}
+                    <tr>
+                        <td>{{ b.booking_id }}</td>
+                        <td>{{ b.trekker_id }}</td>
+                        <td>{{ b.trek_id }}</td>
+                        <td>{{ b.booking_date }}</td>
+                        <td>Booked</td>
+                        <td>
+                            {% if b.payment_status == 0 %}
+                            <span>Pending</span>
+                            {% elif b.payment_status == 1 %}
+                            <span>Paid</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No active bookings available!</td>
+                    </tr>
+                    {% endif %}
+                </table>
+                <br>
+                <table class="table">
+                    <caption style="font-size: 18px;">Booking History</caption>
+                    {% if history_bookings %}
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Trekker ID</th>
+                        <th>Trek ID</th>
+                        <th>Booking Date</th>
+                        <th>Booking Status</th>
+                        <th>Payment Status</th>
+                    </tr>
+                    {% for b in history_bookings %}
+                    <tr>
+                        <td>{{ b.booking_id }}</td>
+                        <td>{{ b.trekker_id }}</td>
+                        <td>{{ b.trek_id }}</td>
+                        <td>{{ b.booking_date }}</td>
+                        <td>
+                            {% if b.status == 1 %}
+                            <span>Cancelled</span>
+                            {% elif b.status == 2 %}
+                            <span>Completed</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if b.payment_status == 0 %}
+                            <span>Pending</span>
+                            {% elif b.payment_status == 1 %}
+                            <span>Paid</span>
+                            {% elif b.payment_status == 2 %}
+                            <span>Refunded</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No booking history available!</td>
+                    </tr>
+                    {% endif %}
+                </table>
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

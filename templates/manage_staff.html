@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Manage Staff</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Manage Staff</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+
+
+
+                <table class="table" name="Recent Treks">
+                    <caption style="font-size: 18px;">Pending Requests</caption>
+                    {% if pending_staff %}
+
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for s in pending_staff %}
+                    <tr>
+                        <td>{{ s.staff_id }}</td>
+                        <td>{{ s.full_name }}</td>
+                        <td>{{ s.user_details.email }}</td>
+                        <td>{{ s.phone_no }}</td>
+                        <td>
+                            <a href="{{ url_for('manage_staff', staff_id=s.staff_id, action='approve') }}"><button
+                                    type="button">Approve</button></a>
+                            <a href="{{ url_for('manage_staff', staff_id=s.staff_id, action='reject') }}"><button
+                                    type="button">Reject</button></a>
+                            <a href="{{ url_for('manage_staff', staff_id=s.staff_id, action='blacklist') }}"><button
+                                    type="button">Blacklist</button></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td>No requests are pending!</td>
+                    </tr>
+                    {% endif %}
+                </table>
+
+                <br>
+
+
+
+
+                <table class="table" name="Recent Treks">
+                    <caption style="font-size: 18px;">Action History</caption>
+                    {% if history_staff %}
+
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for s in history_staff %}
+                    <tr>
+                        <td>{{ s.staff_id }}</td>
+                        <td>{{ s.full_name }}</td>
+                        <td>{{ s.user_details.email }}</td>
+                        <td>{{ s.phone_no }}</td>
+                        <td>
+                            {% if s.status == 1 %}
+                            <span>Approved</span>
+                            {% elif s.status == 2 %}
+                            <span>Rejected</span>
+                            {% elif s.status == 3 %}
+                            <span>Blacklisted</span>
+                            {% endif %}
+                        </td>
+                        <td><a href="{{ url_for('manage_staff', staff_id=s.staff_id, action='undo') }}"><button
+                                    type="button">Undo</button></a></td>
+                    </tr>
+                    {% endfor %}
+
+                    {% else %}
+                    <tr>
+                        <td>No Staff History recorded yet!</td>
+                    </tr>
+
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

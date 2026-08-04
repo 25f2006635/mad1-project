@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Search Results</title>
+</head>
+<body>
+<div class="container">
+    <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
+    <div style="display: flex; justify-content: space-between;">
+        <span style="text-align: left; color: cornsilk; font-size: 20px;" ></span> 
+        <span style="text-align: right;">
+            <form action="{{ url_for('search') }}" method="GET">
+            <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px"> 
+            <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}" >Logout</a>
+            </form>
+        </span>
+    </div>
+        <h2 class="heading">Search Results</h2>
+        <br>                    
+    <div style="display: flex;" >
+        
+        <div class="sidebar" >
+            <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+            <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+            <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+            <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+            <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+            <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
+           
+        </div>
+
+        <div class="dash_style">
+       
+        <table class="table"  name="search results">
+            <tr><th>Types</th><th>Details</th></tr>
+            {% for item in results %}
+            <tr>
+                <td><strong>{{ item.__class__.__name__ }}</strong></td>
+                <td>
+                  {% for col in item.__table__.columns %}
+                    <strong>{{ col.name }}:</strong> {{ getattr(item, col.name) }}
+                    {% if not loop.last %}|{% endif %}
+                  {% endfor %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No results found.</td>
+            </tr>
+            {% endfor %}
+
+
+        </table>
+        
+        </div>
+        
+    </div>
+    <div class="center">
+        <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+    </div>
+</div>
+</body>
+</html>
+

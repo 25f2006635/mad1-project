@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Manage Users</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Manage Users</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+
+                <table class="table" name="Recent Treks">
+                    <caption style="font-size: 18px;">
+                        Active Users
+                    </caption>
+                    {% if active_trekkers %}
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for t in active_trekkers %}
+                    <tr>
+                        <td>{{ t.trekker_id }}</td>
+                        <td>{{ t.full_name }}</td>
+                        <td>{{ t.user_details.email }}</td>
+                        <td>{{ t.phone_no }}</td>
+                        <td>{{ t.address }}</td>
+                        <td>
+                            {% if t.status == 0 %}
+                            <span>Active</span>
+                            {% elif t.status == 1 %}
+                            <span>Deactivated</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('manage_users', action='blacklist', trekker_id=t.trekker_id) }}">
+                                <button type="button">Blacklist</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No registered users available!</td>
+                    </tr>
+                    {% endif %}
+                </table>
+                <br>
+                <table class="table">
+                    <caption style="font-size: 18px;">Blacklisted Users (History)</caption>
+                    {% if history_trekkers %}
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for t in history_trekkers %}
+                    <tr>
+                        <td>{{ t.trekker_id }}</td>
+                        <td>{{ t.full_name }}</td>
+                        <td>{{ t.user_details.email }}</td>
+                        <td>{{ t.phone_no }}</td>
+                        <td>{{ t.address }}</td>
+                        <td>
+                            <a href="{{ url_for('manage_users', action='undo', trekker_id=t.trekker_id) }}">
+                                <button type="button">Undo</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No blacklisted users available!</td>
+                    </tr>
+                    {% endif %}
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

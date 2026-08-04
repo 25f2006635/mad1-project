@@ -27,13 +27,13 @@
                 <h2 class="heading">Legend/Roles</h2>
                 <table class="table" style="padding: 20px;margin: 50px;">
                     <tr>
-                        <td><button id="button" type="button" onclick="window.location.href='admin_login.html'">Admin </button></td>
+                        <td><a href="{{ url_for('admin_signin') }}"><button id="button" type="button">Admin </button></a></td>
                     </tr>
                     <tr>
-                        <td><button id="button" type="button" onclick="window.location.href='staff_login.html'">Trek Staff</button></td>
+                        <td><a href="{{ url_for('staff_signin') }}"><button id="button" type="button">Trek Staff </button></a></td>
                     </tr>
                     <tr>
-                        <td><button id="button" type="button" onclick="window.location.href='user_login.html'">User/Trekker</button></td>
+                        <td><a href="{{ url_for('user_signin') }}"><button id="button" type="button">User/Trekker</button></a></td>
                     </tr>
                     
 
