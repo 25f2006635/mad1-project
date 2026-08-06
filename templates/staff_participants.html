@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Participants</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ staff.full_name }}!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Participants</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('staff_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('staff_manage_treks') }}" class="normal-text-link">My Treks</a><br>
+                <a href="{{ url_for('staff_participants') }}" class="normal-text-link">Participants</a><br>
+                <a href="{{ url_for('staff_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('staff_signin') }}" class="normal-text-link">Logout</a>
+            </div>
+
+            <div class="dash_style">
+                <form method="GET" action="{{ url_for('staff_participants') }}" style="margin-left: 90px; color:burlywood;">
+                    <label for="trek_id"><strong>Trek : </strong></label>
+                    <select name="trek_id" id="trek_id">
+                        {% for trek in assigned_treks %}
+                        <option value="{{ trek.trek_id }}" {% if trek.trek_id==selected_trek_id %}selected{% endif %}>
+                            {{ trek.trek_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Filter</button>
+                </form>
+                <br>
+                <table class="table">
+                    <tr>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Trekker ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Booking Status</th>
+                    </tr>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.booking_id }}</td>
+                        <td>{{ booking.user_id }}</td>
+                        <td>{{ booking.user.name if booking.user else 'N/A' }}</td>
+                        <td>{{ booking.user.phone if booking.user else 'N/A' }}</td>
+                        <td>{{ 'Completed' if booking.status == 3 else 'Booked' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No participants registered for this trek.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

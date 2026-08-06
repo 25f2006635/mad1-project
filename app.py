@@ -5,6 +5,7 @@ app = None
 #creating configuration between app, controller and db model
 def setup_app():
     app = Flask(__name__)
+    app.secret_key = 'secret'
     app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///trek.sqlite3"
     db.init_app(app)  #linking between db and flask
     app.app_context().push()   #giving access of my current app to other modules

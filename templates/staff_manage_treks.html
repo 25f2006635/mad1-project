@@ -1,51 +1,79 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/main.css">
-    <title>Staff Dashboard</title>
+    <title>My Treks</title>
 </head>
+
 <body>
-<div class="container">
-    <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
-    <div style="display: flex; justify-content: space-between;">
-        <span style="text-align: left; color: cornsilk; font-size: 20px;" >Hello, Staff Member!</span> 
-        <span style="text-align: right;"><input type="text" name="searchtxt" placeholder="Search Treks, Staff or Users..." width: 500px> <input type="button" value="Search"> | <a href="login.html" >Logout</a></span>
-    </div>
-        <h2 class="heading">Staff Dashboard</h2>
-        <br>                    
-    <div style="display: flex;" >
-        
-        <div class="sidebar" >
-            <a href="admin_dash.html" class="normal-text-link">Dashboard</a><br>
-            <a href="admin_dash.html" class="normal-text-link">My Treks</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Participants</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Profile</a><br>
-            <a href="admin_dash.html" class="normal-text-link">Logout</a>
-           
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
         </div>
-
-        <div class="dash_style">
-        <table class="table" >
-            <tr><th>Assigned Treks</th><th>Total Participants</th><th>Open Treks</th></tr>
-            <tr><td>12</td><td>48</td><td>9</td></tr>
-        </table>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ staff.full_name }}!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">My Treks</h2>
         <br>
-        <table class="table"  name="Users" >
-            <caption style="text-align: left">My Assigned Treks</caption> 
-            <tr><th>Trek Name</th><th>Location</th><th>Participants</th><th>Slots</th><th>Status</th><th>Action</th></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>9</td><td>9</td><td><a href="{{ url_for('staff_signin') }}"><button type="button">Manage</button></a></td></tr>
-            <tr><td>12</td><td>48</td><td>9</td><td>9</td><td>9</td><td><a href="{{ url_for('staff_signin') }}"><button type="button">Manage</button></a></td></tr>
-        </table>
-        </div>
-        
-    </div>
-    <div class="center">
-        <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
-    </div>
-</div>
-</body>
-</html>
+        <div style="display: flex;">
 
+            <div class="sidebar">
+                <a href="{{ url_for('staff_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('staff_manage_treks') }}" class="normal-text-link">My Treks</a><br>
+                <a href="{{ url_for('staff_participants') }}" class="normal-text-link">Participants</a><br>
+                <a href="{{ url_for('staff_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('staff_signin') }}" class="normal-text-link">Logout</a>
+            </div>
+
+            <div class="dash_style">
+                <table class="table">
+                    <tr>
+                        <th>Trek ID</th>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Slots</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for trek in treks %}
+                    <tr>
+                        <td>{{ (trek.trek_id) }}</td>
+                        <td>{{ trek.trek_name }}</td>
+                        <td>{{ trek.location }}</td>
+                        <td>{{ trek.av_slots }}</td>
+                        <td>{{ 'Open' if trek.status == 1 else 'Closed' }}</td>
+                        <td>{{ trek.st_date.strftime('%d %b %Y') if trek.st_date else 'N/A' }}</td>
+                        <td>{{ trek.en_date.strftime('%d %b %Y') if trek.en_date else 'N/A' }}</td>
+                        <td>
+                            <a href="{{ url_for('staff_edit_trek', trek_id=trek.trek_id) }}"><button type="button">Edit</button></a></td>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8">No assigned treks found.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                </table>
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

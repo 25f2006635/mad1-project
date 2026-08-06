@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Edit My Profile</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ staff.full_name }}!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Edit Trek</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('staff_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('staff_manage_treks') }}" class="normal-text-link">My Treks</a><br>
+                <a href="{{ url_for('staff_participants') }}" class="normal-text-link">Participants</a><br>
+                <a href="{{ url_for('staff_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('staff_signin') }}" class="normal-text-link">Logout</a>
+            </div>
+
+            <div class="dash_style">
+                <form method="POST" action="{{ url_for('staff_edit_trek', trek_id=trek.trek_id) }}"
+                    style="color: bisque; padding-left: 20px; font-size: 18px; ">
+                    <table style="white-space: nowrap;">
+                        <tr>
+                            <td><strong>Trek ID : </strong></td>
+                            <td>{{ (trek.trek_id) }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trek Name : </strong></td>
+                            <td>{{ staff.full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Location : </strong></td>
+                            <td>{{ trek.location }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Difficulty : </strong></td>
+                            <td>
+                                {% if trek.difficulty == 0 %}Easy
+                                {% elif trek.difficulty == 1 %}Moderate
+                                {% elif trek.difficulty == 2 %}Hard
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duration (Days) : </strong></td>
+                            <td>{{ trek.duration }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description : </strong></td>
+                            <td style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">{{
+                                trek.description }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Start Date : </strong></td>
+                            <td>{{ trek.st_date.strftime('%d %b %Y') if trek.st_date else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>End Date : </strong></td>
+                            <td>{{ trek.en_date.strftime('%d %b %Y') if trek.en_date else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Available Slots : </strong></td>
+                            <td><input type="number" name="av_slots" value="{{ trek.av_slots }}" required></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trek Status : </strong></td>
+                            <td>
+                                <select name="status">
+                                    <option value="1" {% if trek.status==1 or trek.status=='1' %}selected{% endif %}>
+                                        Open</option>
+                                    <option value="0" {% if trek.status==0 or trek.status=='0' %}selected{% endif %}>
+                                        Closed</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('staff_manage_treks') }}"><button type="button">Cancel</button></a>
+                                <button type="submit">Save</button>
+                            </td>
+                        </tr>
+                    </table>
+
+                </form>
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

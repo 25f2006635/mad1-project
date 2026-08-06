@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session
 from flask import current_app as app
 from models import *
 
@@ -30,6 +30,8 @@ def staff_signin():
             staff = db.session.query(Staff).filter(Staff.user_id == user.user_id).first()
             if staff:
                 if staff.status == 1:
+                    session['user_id'] = user.user_id
+                    session['staff_id'] = staff.staff_id
                     return redirect(url_for('staff_dash'))
                 elif staff.status == 0:
                     return ("Your account registration is still pending approval!")
@@ -100,9 +102,6 @@ def admin_dash():
     recent_bookings = Bookings.query.order_by(Bookings.booking_id.desc()).limit(3).all()
     return render_template("admin_dash.html", total_treks=total_treks,total_users=total_users,total_staff=total_staff,total_bookings=total_bookings,recent_bookings=recent_bookings)
 
-@app.route('/staff')
-def staff_dash():
-    return render_template("staff_dash.html")
 
 @app.route('/user')
 def user_dash():
@@ -126,8 +125,6 @@ def manage_treks():
     recent_treks = Trek.query.filter(Trek.status.in_([0, 1, 2])).all()
     history_treks = Trek.query.filter(Trek.status.in_([3, 4])).all()
     return render_template("manage_treks.html", recent_treks=recent_treks, history_treks=history_treks)
-
-
 
 
 @app.route('/manage_staff', methods=['GET', 'POST'])
@@ -155,8 +152,6 @@ def manage_staff():
     return render_template("manage_staff.html", pending_staff=pending_staff, history_staff=history_staff)
 
 
-
-
 @app.route('/manage_users', methods=['GET'])
 def manage_users():
     action = request.args.get('action')
@@ -180,13 +175,11 @@ def manage_users():
     return render_template('manage_users.html', active_trekkers=active_trekkers, history_trekkers=history_trekkers)
 
 
-
 @app.route('/bookings', methods=['GET'])
 def manage_bookings():
     active_bookings = Bookings.query.filter(Bookings.status == 0).all()
     history_bookings = Bookings.query.filter(Bookings.status.in_([1, 2])).all()
     return render_template("manage_bookings.html", active_bookings=active_bookings, history_bookings=history_bookings)
-
 
 
 @app.route('/add_trek', methods=['GET', 'POST'])
@@ -212,14 +205,12 @@ def add_trek():
     return render_template('add_trek.html', staff_list=staff_list)
  
 
-
-
-
 @app.route('/edit_trek/<int:trek_id>')
 def edit_trek(trek_id):
     trek_data = Trek.query.get_or_404(trek_id)
     staff_list = Staff.query.filter_by(status=1).all()
     return render_template("edit_trek.html", trek_data=trek_data, staff_list=staff_list)
+
 
 @app.route('/update_trek', methods=["GET","POST"])
 def update_trek():
@@ -251,6 +242,128 @@ def update_trek():
     return redirect(url_for("manage_treks"))
 
 
+@app.route('/staff_dash')
+def staff_dash():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('staff_signin'))
+
+    staff = db.session.query(Staff).filter(Staff.user_id == user_id).first()
+    if not staff:
+        return redirect(url_for('staff_signin'))
+    
+
+    assigned_treks_query = Trek.query.filter(Trek.assigned_staff == staff, Trek.status.in_([0, 1, 2, 3]))
+    total_treks = assigned_treks_query.count()
+    assigned_treks = assigned_treks_query.limit(3).all()
+    open_treks = Trek.query.filter(Trek.assigned_staff == staff, Trek.status == 1).count()
+    trek_ids = [trek.trek_id for trek in assigned_treks]
+    total_participants = db.session.query(Bookings).filter(Bookings.trek_id.in_(trek_ids)).count() if trek_ids else 0
+   
+
+    return render_template("staff_dash.html", treks=assigned_treks, total_treks=total_treks, total_participants=total_participants, open_treks=open_treks, staff=staff)
+
+
+
+def get_current_staff():
+    user_id = session.get('user_id')
+    if not user_id:
+        return None
+    return Staff.query.filter_by(user_id=user_id).first()
+
+
+@app.route('/staff_manage_treks', methods=['GET', 'POST'])
+def staff_manage_treks():
+    staff = get_current_staff()
+    if not staff:
+        return redirect(url_for('staff_signin'))
+
+    treks = Trek.query.filter_by(assigned_staff=staff).all()
+    trek_ids = [t.trek_id for t in treks]
+    bookings = Bookings.query.filter(Bookings.trek_id.in_(trek_ids)).all() if trek_ids else []
+    participant_count = len(bookings)
+
+    if request.method == 'POST':
+        # Handle inline updates if editing directly from the main list page
+        trek_id = request.form.get('trek_id', type=int)
+        trek = Trek.query.filter_by(trek_id=trek_id, assigned_staff=staff).first_or_404()
+
+        action = request.form.get('action')
+        if action == 'mark_started':
+            trek.status = 1  # Open/Started
+        elif action == 'mark_completed':
+            trek.status = 3  # Completed
+        elif 'av_slots' in request.form:
+            trek.av_slots = request.form.get('av_slots')
+            if 'status' in request.form:
+                trek.status = int(request.form.get('status'))
+
+        db.session.commit()
+        return redirect(url_for('staff_manage_treks'))
+    return render_template('staff_manage_treks.html', treks=treks, bookings=bookings, participant_count=participant_count, staff=staff)
+
+
+@app.route('/staff_edit_trek/<int:trek_id>', methods=['GET', 'POST'])
+def staff_edit_trek(trek_id):
+    staff = get_current_staff()
+    if not staff:
+        return redirect(url_for('staff_signin'))
+    trek = Trek.query.filter_by(trek_id=trek_id, assigned_staff=staff).first_or_404()
+    if request.method == 'POST':
+        trek.av_slots = request.form.get('av_slots', type=int)
+        trek.status = request.form.get('status', type=int)
+        db.session.commit()
+        return redirect(url_for('staff_manage_treks'))
+
+    return render_template('staff_edit_trek.html', staff=staff, trek=trek)
+
+
+@app.route('/staff_participants')
+def staff_participants():
+    staff = get_current_staff()
+    if not staff:
+        return redirect(url_for('staff_signin'))
+
+    assigned_treks = Trek.query.filter_by(assigned_staff=staff).all()
+    selected_trek_id = request.args.get('trek_id', type=int)
+
+    if not selected_trek_id and assigned_treks:
+        selected_trek_id = assigned_treks[0].trek_id
+
+    bookings = []
+    if selected_trek_id:
+        trek = Trek.query.filter_by(trek_id=selected_trek_id, assigned_staff=staff).first_or_404()
+        bookings = Bookings.query.filter_by(trek_id=trek.trek_id).all()
+
+    return render_template('staff_participants.html', staff=staff, assigned_treks=assigned_treks, selected_trek_id=selected_trek_id, bookings=bookings)
+
+
+@app.route('/staff_profile', methods=['GET', 'POST'])
+def staff_profile():
+    staff = get_current_staff()
+    if not staff:
+        return redirect(url_for('staff_signin'))
+
+    return render_template('staff_profile.html', staff=staff)
+
+
+@app.route('/staff_edit_profile', methods=['GET', 'POST'])
+def staff_edit_profile():
+    staff = get_current_staff()
+    if not staff:
+        return redirect(url_for('staff_signin'))
+    
+    if request.method == 'POST':
+            # Permission Rule: View/Update phone, address, and password
+        staff.phone = request.form.get('phone')
+        staff.address = request.form.get('address')
+            
+        db.session.commit()
+        return redirect(url_for('staff_profile'))
+    
+    return render_template('staff_edit_profile.html', staff=staff)
+
+
 @app.route('/search')
 def search():
     query = request.args.get('q', '').strip()
@@ -265,7 +378,6 @@ def search():
               matches = model.query.filter(db.or_(*filters)).all()
               results.extend(matches)
     return render_template('results.html', query=query, results=results, getattr=getattr)
-
 
 
 
@@ -289,8 +401,3 @@ def user_treks():
     open_treks = Trek.query.filter_by(status=1).all()
     return render_template("user_treks.html", treks=open_treks)
 
-@app.route('/staff_dashboard')
-def staff_dashboard():
-    # Visible to staff: Pending (0), Open (1), Closed (2), Completed (3)
-    staff_treks = Trek.query.filter(Trek.status.in_([0, 1, 2, 3])).all()
-    return render_template("staff_dashboard.html", treks=staff_treks)
