@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>My Bookings</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ user_name }} !</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('user_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">My Bookings</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('user_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('browse_treks') }}" class="normal-text-link">Browse Treks</a><br>
+                <a href="{{ url_for('my_bookings') }}" class="normal-text-link">My Bookings</a><br>
+                <a href="{{ url_for('my_history') }}" class="normal-text-link">History</a><br>
+                <a href="{{ url_for('my_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('user_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+
+                <table class="table" name="Recent Treks">
+
+                    <tr>
+                        <th>Trek Name</th>
+                        <th>Booking Date</th>
+                        <th>Status</th>
+                        <th>Payment Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% if user_bookings %}
+                    {% for booking in user_bookings %}
+                    <tr>
+                        <td>{{ booking.trek.trek_name }}</td>
+                        <td>{{ booking.booking_date.strftime('%d %b %Y') }}</td>
+                        <td>
+                            {% if booking.status == 0 %}Booked
+                            {% elif booking.status == 1 %}Cancelled
+                            {% elif booking.status == 2 %}Completed
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.payment_status == 1 %}Paid
+                            {% else %}Pending
+                            {% endif %}
+                        </td>
+                        <td><a href="{{ url_for('booking_details', booking_id=booking.booking_id) }}"><button type="button">View Details</button></a></td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">You have no active bookings.</td>
+                    </tr>
+                    {% endif %}
+
+                </table>
+
+
+
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Edit Profile</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ user_name }} !</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('user_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Edit Profile</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('user_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('browse_treks') }}" class="normal-text-link">Browse Treks</a><br>
+                <a href="{{ url_for('my_bookings') }}" class="normal-text-link">My Bookings</a><br>
+                <a href="{{ url_for('my_history') }}" class="normal-text-link">History</a><br>
+                <a href="{{ url_for('my_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('user_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+                <form method="POST" action="{{ url_for('user_edit_profile') }}"
+                    style="color: bisque; padding-left: 20px; font-size: 18px; ">
+                    <table>
+                        <tr>
+                            <td><strong>Trekker ID : </strong></td>
+                            <td>{{ trekker.trekker_id }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Name : </strong></td>
+                            <td><input type="text" name="name" value="{{ trekker.full_name }}" required></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email : </strong></td>
+                            <td>{{trekker.user_details.email}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone : </strong></td>
+                            <td><input type="tel" name="phone" value="{{ trekker.phone_no }}" required></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address : </strong></td>
+                            <td><textarea name="address" rows="3" cols="25" required>{{ trekker.address }}</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Status : </strong></td>
+                            <td>
+                                <select name="status">
+                                    <option value="0" {% if trekker.status==0 %}selected{% endif %}>Active</option>
+                                    <option value="1" {% if trekker.status==1 %}selected{% endif %}>Deactive</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <button type="submit">Save Changes</button>
+                                <a href="{{ url_for('my_profile') }}"><button type="button">Cancel</button></a>
+                            </td>
+                        </tr>
+                    </table>
+
+                </form>
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

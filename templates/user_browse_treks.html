@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Browse Treks</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ user_name }} !</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('user_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Browse Treks</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('user_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('browse_treks') }}" class="normal-text-link">Browse Treks</a><br>
+                <a href="{{ url_for('my_bookings') }}" class="normal-text-link">My Bookings</a><br>
+                <a href="{{ url_for('my_history') }}" class="normal-text-link">History</a><br>
+                <a href="{{ url_for('my_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('user_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+
+                <form method="GET" action="{{ url_for('browse_treks') }}" style="margin-left: 90px; color:burlywood;">
+                    <label for="locn"><strong>Location : </strong></label>
+                    <select name="locn" id="locn">
+                        <option value="All" {% if selected_loc=='All' %}selected{% endif %}>All Locations
+                        </option>
+                        {% for locn in locations %}
+                        <option value="{{ locn }}" {% if selected_loc==locn %}selected{% endif %}>
+                            {{ locn }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="Difficulty"><strong>Difficulty : </strong></label>
+                    <select name="diff" id="difficulty">
+                        <option value="All" {% if selected_diff=='All' or not selected_diff %}selected{% endif %}>
+                            Difficulty: All</option>
+                        <option value="0" {% if selected_diff=='0' %}selected{% endif %}>Easy</option>
+                        <option value="1" {% if selected_diff=='1' %}selected{% endif %}>Moderate</option>
+                        <option value="2" {% if selected_diff=='2' %}selected{% endif %}>Hard</option>
+                    </select>
+                    <button type="submit">Filter</button>
+                </form>
+                <br>
+                <table class="table" name="Available Treks" style="width: 90%;">
+                    <tr>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Difficulty</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Duration</th>
+                        <th>Available Slots</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                    {% if available_treks %}
+                        {% for trek in available_treks %}
+                            {% if trek.trek_id not in booked_trek_ids %}
+                            <tr>
+                                <td>{{ trek.trek_name }}</td>
+                                <td>{{ trek.location }}</td>
+                                <td>
+                                    {% if trek.difficulty == 0 %}Easy
+                                    {% elif trek.difficulty == 1 %}Moderate
+                                    {% elif trek.difficulty == 2 %}Hard
+                                    {% endif %}
+                                </td>
+                                <td>{{ trek.st_date.strftime('%d %b %Y') if trek.st_date else 'N/A' }}</td>
+                                <td>{{ trek.en_date.strftime('%d %b %Y') if trek.en_date else 'N/A' }}</td>
+                                <td>{{ trek.duration }} days</td>
+                                <td>{{ trek.av_slots }}</td>
+                                <td>
+                                    <details>
+                                        <summary>View</summary>
+                                        <p>{{ trek.description or 'No description available.' }}</p>
+                                    </details>
+                                </td>
+                                <td>
+                                    <form action="{{ url_for('book_trek', trek_id=trek.trek_id) }}" method="POST">
+                                        <button type="submit">Book Now</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="9">No available treks found.</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>

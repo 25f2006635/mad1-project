@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Trekking History</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ user_name }} !</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="{{ url_for('user_signin') }}">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Trekking History</h2>
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                <a href="{{ url_for('user_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('browse_treks') }}" class="normal-text-link">Browse Treks</a><br>
+                <a href="{{ url_for('my_bookings') }}" class="normal-text-link">My Bookings</a><br>
+                <a href="{{ url_for('my_history') }}" class="normal-text-link">History</a><br>
+                <a href="{{ url_for('my_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="{{ url_for('user_signin') }}" class="normal-text-link">Logout</a>
+
+            </div>
+
+            <div class="dash_style">
+                <table class="table" name="Recent Treks">
+                    <tr>
+                        <th>Trek Name</th>
+                        <th>Trek Dates</th>
+                        <th>Completed On</th>
+                        <th>Status</th>
+                    </tr>
+                    {% if bookings %}
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.trek.trek_name }}</td>
+                        <td>{{ booking.trek.st_date.strftime('%d-%b-%Y') }} - {{
+                            booking.trek.en_date.strftime('%d-%b-%Y') }}</td>
+                        <td>
+                            {% if booking.status == 2 %}
+                            {{ booking.trek.en_date.strftime('%d %b %Y') }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.status == 1 %}
+                            Cancelled
+                            {% elif booking.status == 2 %}
+                            Completed
+                            {% else %}
+                            Active
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4">No trekking history found.</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+
+        </div>
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
+        </div>
+    </div>
+</body>
+
+</html>
