@@ -1,11 +1,22 @@
 from flask import Flask
-from models import db
+from models import db, User_Details
+from config import *
+from flask_login import LoginManager
+
 
 app = None
+login_manager = None
 #creating configuration between app, controller and db model
 def setup_app():
+    global app, login_manager
     app = Flask(__name__)
-    app.secret_key = 'secret'
+
+    #Configure login manager
+    app.config["SECRET_KEY"]=SECRET_KEY
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    
+    #Data base settings
     app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///trek.sqlite3"
     db.init_app(app)  #linking between db and flask
     app.app_context().push()   #giving access of my current app to other modules
@@ -20,8 +31,13 @@ def setup_app():
 #executable of flask
 setup_app()  #calling
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User_Details.query.get(int(user_id))
+
 
 from controller import *
+
 if __name__=="__main__":
     app.run(debug=True)
 

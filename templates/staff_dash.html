@@ -18,7 +18,7 @@
             <span style="text-align: right;">
                 <form action="{{ url_for('search') }}" method="GET">
                     <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
-                    <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}">Logout</a>
+                    <input type="submit" value="Search"> | <a href="/staff_logout">Logout</a>
                 </form>
             </span>
         </div>
@@ -32,7 +32,7 @@
                 <a href="{{ url_for('staff_manage_treks') }}" class="normal-text-link">My Treks</a><br>
                 <a href="{{ url_for('staff_participants') }}" class="normal-text-link">Participants</a><br>
                 <a href="{{ url_for('staff_profile') }}" class="normal-text-link">My Profile</a><br>
-                <a href="{{ url_for('staff_signin') }}" class="normal-text-link">Logout</a>
+                <a href="/staff_logout" class="normal-text-link">Logout</a>
             </div>
 
             <div class="dash_style">

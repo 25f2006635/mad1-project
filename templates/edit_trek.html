@@ -13,102 +13,131 @@
         <div class="center">
             <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
         </div>
-        <div class="form_style" ; style="width: 80%;">
-            <form action="/update_trek" method="POST">
-                <h3 class="heading">Edit Trek</h3>
-                <div style="display: flex; padding-top: 18px;">
-                    <div class="form_style" ; style="height: 350px;">
-                        <table class="center">
-                            <tr>
-                                <td><label for="Trek ID">Trek ID :</label></td>
-                                <td><input type="text" name="trek_id" value="{{ trek_data.trek_id }}" readonly></td>
-                            </tr>
-                            <tr>
-                                <td> <label for="Trek Name">Trek Name :</label></td>
-                                <td><input type="text" name="trek_name" value="{{trek_data.trek_name}}"></td>
-                            </tr>
-                            <tr>
-                                <td> <label for="Location">Location :</label></td>
-                                <td><input type="text" name="locn" value="{{trek_data.location}}"></td>
-                            </tr>
-                            <tr>
-                                <td><label>Difficulty :</label></td>
-                                <td>
-                                    <select name="diff">
-                                        <option value="0" {% if trek_data.difficulty|int==0 %}selected{% endif %}>Easy</option>
-                                        <option value="1" {% if trek_data.difficulty|int==1 %}selected{% endif %}>Moderate</option>
-                                        <option value="2" {% if trek_data.difficulty|int==2 %}selected{% endif %}>Hard
-                                        </option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> <label for="Duration">Duration (Days) :</label></td>
-                                <td><input type="text" name="durn" value="{{trek_data.duration}}"></td>
-                            </tr>
-                            <tr>
-                                <td> <label for=" Available Slots">Available Slots :</label></td>
-                                <td><input type="text" name="av_slots" value="{{ trek_data.av_slots }}"></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="form_style" ; style="height: 350px;">
-                        <table class="center">
-                            <tr>
-                                <td> <label for="Start Date">Start Date :</label></td>
-                                <td><input type="date" name="st_date" value="{{ trek_data.st_date }}"></td>
-                            </tr>
-                            <tr>
-                                <td> <label for="End Date">End Date :</label></td>
-                                <td><input type="date" name="en_date" value="{{ trek_data.en_date }}"></td>
-                            </tr>
-                            <tr>
-                                <td><label>Assign Staff :</label></td>
-                                <td>
-                                    <select name="select_staff">
-                                        <option value="" selected="{{ 'selected' if not trek_data.staff_assigned }}">--Unassigned --</option>
-                                        {% for s in staff_list %}
-                                        <option value="{{ s.staff_id }}"
-                                            selected="{{ 'selected' if trek_data.staff_assigned == s.staff_id }}">{{
-                                            s.full_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label>Status :</label></td>
-                                <td>
-                                    <select name="status">
-                                        <option value="0" {% if trek_data.status|int==0 %}selected{% endif %}>Pending
-                                        </option>
-                                        <option value="1" {% if trek_data.status|int==1 %}selected{% endif %}>Open
-                                        </option>
-                                        <option value="2" {% if trek_data.status|int==2 %}selected{% endif %}>Closed
-                                        </option>
-                                        <option value="3" {% if trek_data.status|int==3 %}selected{% endif %}>Completed
-                                        </option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label>Description: </label></td>
-                                <td><textarea name="desn" id="add" cols="20"
-                                        rows="5">{{trek_data.description}}</textarea></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                <td>
-                                <td><a href="{{ url_for('manage_treks') }}"><button type="button">Cancel</button></a>
-                                </td>
-                                <td>
-                                <td>
-                                <td><button type="submit">Save</button></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="submit" value="Search"> | <a href="/admin_logout">Logout</a>
+                </form>
+            </span>
+        </div>
+        <h2 class="heading">Edit Trek</h2>
+        <br>
+        <div style="display: flex;">
+            <div class="sidebar">
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="/admin_logout" class="normal-text-link">Logout</a>
 
-            </form>
+            </div>
+            <div class="form_style" ; style="width: 80%;">
+                <form action="/update_trek" method="POST">
+                    <div style="display: flex; padding-top: 18px;">
+                        <div class="form_style" ; style="height: 350px;">
+                            <table class="center">
+                                <tr>
+                                    <td><label for="Trek ID">Trek ID :</label></td>
+                                    <td><input type="text" name="trek_id" value="{{ trek_data.trek_id }}" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td> <label for="Trek Name">Trek Name :</label></td>
+                                    <td><input type="text" name="trek_name" value="{{trek_data.trek_name}}"></td>
+                                </tr>
+                                <tr>
+                                    <td> <label for="Location">Location :</label></td>
+                                    <td><input type="text" name="locn" value="{{trek_data.location}}"></td>
+                                </tr>
+                                <tr>
+                                    <td><label>Difficulty :</label></td>
+                                    <td>
+                                        <select name="diff">
+                                            <option value="0" {% if trek_data.difficulty|int==0 %}selected{% endif %}>
+                                                Easy</option>
+                                            <option value="1" {% if trek_data.difficulty|int==1 %}selected{% endif %}>
+                                                Moderate</option>
+                                            <option value="2" {% if trek_data.difficulty|int==2 %}selected{% endif %}>
+                                                Hard
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> <label for="Duration">Duration (Days) :</label></td>
+                                    <td><input type="text" name="durn" value="{{trek_data.duration}}"></td>
+                                </tr>
+                                <tr>
+                                    <td> <label for=" Available Slots">Available Slots :</label></td>
+                                    <td><input type="text" name="av_slots" value="{{ trek_data.av_slots }}"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="form_style" ; style="height: 350px;">
+                            <table class="center">
+                                <tr>
+                                    <td> <label for="Start Date">Start Date :</label></td>
+                                    <td><input type="date" name="st_date" value="{{ trek_data.st_date }}"></td>
+                                </tr>
+                                <tr>
+                                    <td> <label for="End Date">End Date :</label></td>
+                                    <td><input type="date" name="en_date" value="{{ trek_data.en_date }}"></td>
+                                </tr>
+                                <tr>
+                                    <td><label>Assign Staff :</label></td>
+                                    <td>
+                                        <select name="select_staff">
+                                            <option value=""
+                                                selected="{{ 'selected' if not trek_data.staff_assigned }}">--Unassigned
+                                                --</option>
+                                            {% for s in staff_list %}
+                                            <option value="{{ s.staff_id }}"
+                                                selected="{{ 'selected' if trek_data.staff_assigned == s.staff_id }}">{{
+                                                s.full_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>Status :</label></td>
+                                    <td>
+                                        <select name="status">
+                                            <option value="0" {% if trek_data.status|int==0 %}selected{% endif %}>
+                                                Pending
+                                            </option>
+                                            <option value="1" {% if trek_data.status|int==1 %}selected{% endif %}>Open
+                                            </option>
+                                            <option value="2" {% if trek_data.status|int==2 %}selected{% endif %}>Closed
+                                            </option>
+                                            <option value="3" {% if trek_data.status|int==3 %}selected{% endif %}>
+                                                Completed
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>Description: </label></td>
+                                    <td><textarea name="desn" id="add" cols="20"
+                                            rows="5">{{trek_data.description}}</textarea></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    <td>
+                                    <td><a href="{{ url_for('manage_treks') }}"><button
+                                                type="button">Cancel</button></a>
+                                    </td>
+                                    <td>
+                                    <td>
+                                    <td><button type="submit">Save</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
         </div>
         <div class="center">
             <h5>&copy; copyrights reserved to Trekkmaster, 2026</h5>

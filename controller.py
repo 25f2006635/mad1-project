@@ -2,6 +2,7 @@ from datetime import datetime, date
 from flask import render_template, request, redirect, url_for, session
 from flask import current_app as app
 from models import *
+from flask_login import login_user, logout_user, login_required
 
 
 @app.route('/')
@@ -15,6 +16,7 @@ def admin_signin():
         pwd = request.form.get("pwd")
         user=db.session.query(User_Details).filter(User_Details.email==uname, User_Details.password==pwd).first()
         if user and user.role==0:
+            login_user(user)
             return redirect(url_for('admin_dash'))
         else:
             return ("You are not an Admin!")
@@ -30,6 +32,7 @@ def staff_signin():
             staff = db.session.query(Staff).filter(Staff.user_id == user.user_id).first()
             if staff:
                 if staff.status == 1:
+                    login_user(user)
                     session['user_id'] = user.user_id
                     session['staff_id'] = staff.staff_id
                     return redirect(url_for('staff_dash'))
@@ -51,6 +54,7 @@ def user_signin():
         pwd = request.form.get("pwd")
         user=db.session.query(User_Details).filter(User_Details.email==uname, User_Details.password==pwd).first()
         if user and user.role==2:
+            login_user(user)
             session['user_id'] = user.user_id
             return redirect(url_for('user_dash'))
         else:
@@ -94,6 +98,7 @@ def register():
         
 
 @app.route('/admin')
+@login_required
 def admin_dash():
     total_treks = Trek.query.filter(Trek.status != 4).count()
     total_users = Trekker.query.filter_by(status=0).count()
@@ -106,6 +111,7 @@ def admin_dash():
 
 
 @app.route('/manage_treks', methods=['GET'])
+@login_required
 def manage_treks():
     removed_id = request.args.get('removed_id')
     if removed_id:
@@ -126,6 +132,7 @@ def manage_treks():
 
 
 @app.route('/manage_staff', methods=['GET', 'POST'])
+@login_required
 def manage_staff():
     staff_id = request.args.get('staff_id')
     action = request.args.get('action') 
@@ -151,6 +158,7 @@ def manage_staff():
 
 
 @app.route('/manage_users', methods=['GET'])
+@login_required
 def manage_users():
     action = request.args.get('action')
     trekker_id = request.args.get('trekker_id')
@@ -174,6 +182,7 @@ def manage_users():
 
 
 @app.route('/bookings', methods=['GET'])
+@login_required
 def manage_bookings():
     active_bookings = Bookings.query.filter(Bookings.status == 0).all()
     history_bookings = Bookings.query.filter(Bookings.status.in_([1, 2])).all()
@@ -181,6 +190,7 @@ def manage_bookings():
 
 
 @app.route('/add_trek', methods=['GET', 'POST'])
+@login_required
 def add_trek():
     if request.method == 'POST':
         trek_name = request.form.get('trek_name')
@@ -204,6 +214,7 @@ def add_trek():
  
 
 @app.route('/edit_trek/<int:trek_id>')
+@login_required
 def edit_trek(trek_id):
     trek_data = Trek.query.get_or_404(trek_id)
     staff_list = Staff.query.filter_by(status=1).all()
@@ -211,6 +222,7 @@ def edit_trek(trek_id):
 
 
 @app.route('/update_trek', methods=["GET","POST"])
+@login_required
 def update_trek():
     trek_id = request.form.get("trek_id")
     old_trek_details = Trek.query.get_or_404(trek_id)
@@ -241,6 +253,7 @@ def update_trek():
 
 
 @app.route('/staff_dash')
+@login_required
 def staff_dash():
     user_id = session.get('user_id')
     if not user_id:
@@ -258,7 +271,6 @@ def staff_dash():
     trek_ids = [trek.trek_id for trek in assigned_treks]
     total_participants = db.session.query(Bookings).filter(Bookings.trek_id.in_(trek_ids)).count() if trek_ids else 0
    
-
     return render_template("staff_dash.html", treks=assigned_treks, total_treks=total_treks, total_participants=total_participants, open_treks=open_treks, staff=staff)
 
 
@@ -271,6 +283,7 @@ def get_current_staff():
 
 
 @app.route('/staff_manage_treks', methods=['GET', 'POST'])
+@login_required
 def staff_manage_treks():
     staff = get_current_staff()
     if not staff:
@@ -302,6 +315,7 @@ def staff_manage_treks():
 
 
 @app.route('/staff_edit_trek/<int:trek_id>', methods=['GET', 'POST'])
+@login_required
 def staff_edit_trek(trek_id):
     staff = get_current_staff()
     if not staff:
@@ -317,6 +331,7 @@ def staff_edit_trek(trek_id):
 
 
 @app.route('/staff_participants')
+@login_required
 def staff_participants():
     staff = get_current_staff()
     if not staff:
@@ -337,6 +352,7 @@ def staff_participants():
 
 
 @app.route('/staff_profile', methods=['GET', 'POST'])
+@login_required
 def staff_profile():
     staff = get_current_staff()
     if not staff:
@@ -346,6 +362,7 @@ def staff_profile():
 
 
 @app.route('/staff_edit_profile', methods=['GET', 'POST'])
+@login_required
 def staff_edit_profile():
     staff = get_current_staff()
     if not staff:
@@ -364,6 +381,7 @@ def staff_edit_profile():
 
 
 @app.route('/user')
+@login_required
 def user_dash():
     user_id = session.get('user_id')
     if not user_id:
@@ -387,6 +405,7 @@ def user_dash():
 
 
 @app.route('/browse_treks')
+@login_required
 def browse_treks():
     user_id = session.get('user_id')
     if not user_id:
@@ -424,6 +443,7 @@ def browse_treks():
 
 
 @app.route('/book_trek/<int:trek_id>', methods=['POST'])
+@login_required
 def book_trek(trek_id):
     user_id = session.get('user_id')
     if not user_id:
@@ -450,6 +470,7 @@ def book_trek(trek_id):
 
 
 @app.route('/my_bookings')
+@login_required
 def my_bookings():
     user_id = session.get('user_id')
     if not user_id:
@@ -463,6 +484,7 @@ def my_bookings():
 
 
 @app.route('/booking_details/<int:booking_id>')
+@login_required
 def booking_details(booking_id):
     user_id = session.get('user_id')
     if not user_id:
@@ -472,6 +494,7 @@ def booking_details(booking_id):
 
 
 @app.route('/cancel_booking/<int:booking_id>', methods=['POST'])
+@login_required
 def cancel_booking(booking_id):
     user_id = session.get('user_id')
     if not user_id:
@@ -487,6 +510,7 @@ def cancel_booking(booking_id):
 
 
 @app.route('/my_history')
+@login_required
 def my_history():
     user_id = session.get('user_id')
     if not user_id:
@@ -498,6 +522,7 @@ def my_history():
     return render_template("user_history.html", user_name=trekker.full_name, bookings=history_bookings)
 
 @app.route('/my_profile')
+@login_required
 def my_profile():
     user_id = session.get('user_id')
     if not user_id:
@@ -507,6 +532,7 @@ def my_profile():
 
 
 @app.route('/user_edit_profile', methods=['GET', 'POST'])
+@login_required
 def user_edit_profile():
     user_id = session.get('user_id')
     if not user_id:
@@ -530,11 +556,6 @@ def user_edit_profile():
 
 
 
-
-
-
-
-
 @app.route('/search')
 def search():
     query = request.args.get('q', '').strip()
@@ -550,25 +571,17 @@ def search():
               results.extend(matches)
     return render_template('results.html', query=query, results=results, getattr=getattr)
 
+@app.route('/admin_logout')
+def admin_logout():
+    logout_user()
+    return redirect(url_for('admin_signin'))
 
+@app.route('/staff_logout')
+def staff_logout():
+    logout_user()
+    return redirect(url_for('staff_signin'))
 
-
-
-#additional python functions
-
-
-def get_all_users():
-    user_data=db.session.query(Trekker).filter().all()
-    return user_data
-
-def get_trek(trek_id):
-    trek_data = db.session.query(Trek).filter(Trek.trek_id==trek_id).first()
-    return trek_data
-
-
-@app.route('/user_treks')
-def user_treks():
-    # Strictly OPEN treks that can be booked
-    open_treks = Trek.query.filter_by(status=1).all()
-    return render_template("user_treks.html", treks=open_treks)
-
+@app.route('/user_logout')
+def user_logout():
+    logout_user()
+    return redirect(url_for('user_signin'))

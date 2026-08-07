@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin   #protecting routes
 
 db=SQLAlchemy()
 
@@ -19,7 +20,7 @@ class Trek(db.Model):
     
 
 
-class User_Details(db.Model):
+class User_Details(db.Model, UserMixin):
     __tablename__='user_details' #user defind name
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique = True, nullable=False)
@@ -28,6 +29,8 @@ class User_Details(db.Model):
     #Relation column linking parent to child
     trekker=db.relationship("Trekker", cascade="all,delete", backref="user_details", uselist=False)
     staff=db.relationship("Staff", cascade="all,delete", backref="user_details", uselist=False)
+    def get_id(self):
+        return str(self.user_id)
 
 class Trekker(db.Model):
     __tablename__='trekker'
