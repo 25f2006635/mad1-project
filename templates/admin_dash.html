@@ -17,7 +17,7 @@
             <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
             <span style="text-align: right;">
                 <form action="{{ url_for('search') }}" method="GET">
-                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 250px">
                     <input type="submit" value="Search"> | <a href="/admin_logout">Logout</a>
                 </form>
             </span>
@@ -62,7 +62,7 @@
                 <br>
                 <table class="table" name="Bookings">
                     <caption style="font-size: 18px;">Recent Bookings</caption>
-                    {% for booking in recent_bookings %}
+                    
                     <tr>
                         <th>Booking ID</th>
                         <th>User Name</th>
@@ -70,9 +70,10 @@
                         <th>Booking Date</th>
                         <th>Status</th>
                     </tr>
+                    {% for booking in recent_bookings %}
                     <tr>
-                        <td>{{ booking.id }}</td>
-                        <td>{{ booking.trekker.name }}</td>
+                        <td>{{ booking.booking_id }}</td>
+                        <td>{{ booking.trekker.full_name }}</td>
                         <td>{{ booking.trek.trek_name }}</td>
                         <td>{{ booking.booking_date.strftime('%Y-%m-%d') }}</td>
                         <td>

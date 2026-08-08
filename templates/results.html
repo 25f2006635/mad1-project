@@ -1,68 +1,147 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/main.css">
     <title>Search Results</title>
 </head>
+
 <body>
-<div class="container">
-    <div class="center"><h1>^-^ Trekkmaster welcomes you ^-^ !</h1></div>
-    <div style="display: flex; justify-content: space-between;">
-        <span style="text-align: left; color: cornsilk; font-size: 20px;" ></span> 
-        <span style="text-align: right;">
-            <form action="{{ url_for('search') }}" method="GET">
-            <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px"> 
-            <input type="submit" value="Search"> | <a href="{{ url_for('admin_signin') }}" >Logout</a>
-            </form>
-        </span>
-    </div>
+    <div class="container">
+        <div class="center">
+            <h1>^-^ Trekkmaster welcomes you ^-^ !</h1>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="text-align: left; color: cornsilk; font-size: 20px;"></span>
+            <span style="text-align: right;">
+                <form action="{{ url_for('search') }}" method="GET">
+                    {% if current_user.role == 0 %}
+                    {% set search_placeholder = "Search Treks, Staff, Users or Bookings..." %}
+                    {% elif current_user.role == 1 %}
+                    {% set search_placeholder = "Search my treks or trekkers..." %}
+                    {% else %}
+                    {% set search_placeholder = "Search treks by name or location..." %}
+                    {% endif %}
+                    <input type="text" name="q" value="{{ query }}" placeholder="{{ search_placeholder }}"
+                        style="width: 250px;">
+                    <input type="submit" value="Search"> |
+                    {% if current_user.role == 0 %}
+                    <a href="/admin_logout">Logout</a>
+                    {% elif current_user.role == 1 %}
+                    <a href="/staff_logout">Logout</a>
+                    {% else %}
+                    <a href="/user_logout">Logout</a>
+                    {% endif %}
+                </form>
+            </span>
+        </div>
         <h2 class="heading">Search Results</h2>
-        <br>                    
-    <div style="display: flex;" >
-        
-        <div class="sidebar" >
-            <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
-            <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
-            <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
-            <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
-            <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
-            <a href="{{ url_for('admin_signin') }}" class="normal-text-link">Logout</a>
-           
+        <br>
+        <div style="display: flex;">
+
+            <div class="sidebar">
+                {% if current_user.role == 0 %}
+                <a href="{{ url_for('admin_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('manage_treks') }}" class="normal-text-link">Treks</a><br>
+                <a href="{{ url_for('manage_staff') }}" class="normal-text-link">Staff</a><br>
+                <a href="{{ url_for('manage_users') }}" class="normal-text-link">Users</a><br>
+                <a href="{{ url_for('manage_bookings') }}" class="normal-text-link">Bookings</a><br>
+                <a href="/admin_logout" class="normal-text-link">Logout</a>
+                {% elif current_user.role == 1 %}
+                <a href="{{ url_for('staff_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('staff_manage_treks') }}" class="normal-text-link">My Treks</a><br>
+                <a href="{{ url_for('staff_participants') }}" class="normal-text-link">Participants</a><br>
+                <a href="{{ url_for('staff_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="/staff_logout" class="normal-text-link">Logout</a>
+                {% else %}
+                <a href="{{ url_for('user_dash') }}" class="normal-text-link">Dashboard</a><br>
+                <a href="{{ url_for('browse_treks') }}" class="normal-text-link">Browse Treks</a><br>
+                <a href="{{ url_for('my_bookings') }}" class="normal-text-link">My Bookings</a><br>
+                <a href="{{ url_for('my_history') }}" class="normal-text-link">History</a><br>
+                <a href="{{ url_for('my_profile') }}" class="normal-text-link">My Profile</a><br>
+                <a href="/user_logout" class="normal-text-link">Logout</a>
+                {% endif %}
+
+            </div>
+
+            <div class="dash_style">
+
+                <table class="table" name="search results">
+                    <tr>
+                        <th>Types</th>
+                        <th>Details</th>
+                    </tr>
+                    {# 1. Render Treks #}
+                    {% for trek in results.treks %}
+                    <tr>
+                        <td><strong>Trek</strong></td>
+                        <td>
+                            <strong>ID:</strong> {{ trek.trek_id }} |
+                            <strong>Name:</strong> {{ trek.trek_name }} |
+                            <strong>Location:</strong> {{ trek.location }} |
+                            <strong>Status:</strong> {{ 'Open' if trek.status == 0 else ('Closed' if trek.status == 1
+                            else 'Completed') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {# 2. Render Staff #}
+                    {% for st in results.staff %}
+                    <tr>
+                        <td><strong>Staff</strong></td>
+                        <td>
+                            <strong>ID:</strong> {{ st.staff_id }} |
+                            <strong>Name:</strong> {{ st.full_name }} |
+                            <strong>Phone:</strong> {{ st.phone_no }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {# 3. Render Users #}
+                    {% for usr in results.users %}
+                    <tr>
+                        <td><strong>User</strong></td>
+                        <td>
+                            <strong>ID:</strong> {{ usr.user_id }} |
+                            <strong>Email:</strong> {{ usr.email }} |
+                            <strong>Role:</strong> {{ 'Admin' if usr.role == 0 else ('Staff' if usr.role == 1 else
+                            'Trekker') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {# 4. Render Bookings #}
+                    {% for booking in results.bookings %}
+                    <tr>
+                        <td><strong>Booking</strong></td>
+                        <td>
+                            <strong>Booking ID:</strong> {{ booking.booking_id }} |
+                            <strong>Trek ID:</strong> {{ booking.trek_id }} |
+                            <strong>Trekker ID:</strong> {{ booking.trekker_id }} |
+                            <strong>Date:</strong> {{ booking.booking_date }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {# Fallback if all results lists are empty #}
+                    {% if not results.treks and not results.staff and not results.users and not results.bookings %}
+                    <tr>
+                        <td colspan="2">No results found "{{ query }}".</td>
+                    </tr>
+                    {% endif %}
+
+
+                </table>
+
+            </div>
+
         </div>
-
-        <div class="dash_style">
-       
-        <table class="table"  name="search results">
-            <tr><th>Types</th><th>Details</th></tr>
-            {% for item in results %}
-            <tr>
-                <td><strong>{{ item.__class__.__name__ }}</strong></td>
-                <td>
-                  {% for col in item.__table__.columns %}
-                    <strong>{{ col.name }}:</strong> {{ getattr(item, col.name) }}
-                    {% if not loop.last %}|{% endif %}
-                  {% endfor %}
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="2">No results found.</td>
-            </tr>
-            {% endfor %}
-
-
-        </table>
-        
+        <div class="center">
+            <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
         </div>
-        
     </div>
-    <div class="center">
-        <h4>&copy; copyrights reserved to Trekkmaster, 2026</h4>
-    </div>
-</div>
 </body>
-</html>
 
+</html>

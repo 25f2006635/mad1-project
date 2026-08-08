@@ -17,7 +17,7 @@
             <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ user_name }} !</span>
             <span style="text-align: right;">
                 <form action="{{ url_for('search') }}" method="GET">
-                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="text" name="q" placeholder="Search treks by name or location..." style="width: 250px">
                     <input type="submit" value="Search"> | <a href="/user_logout">Logout</a>
                 </form>
             </span>

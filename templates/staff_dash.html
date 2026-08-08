@@ -17,7 +17,7 @@
             <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ staff.full_name }}!</span>
             <span style="text-align: right;">
                 <form action="{{ url_for('search') }}" method="GET">
-                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="text" name="q" placeholder="Search my treks or trekkers..." style="width: 250px">
                     <input type="submit" value="Search"> | <a href="/staff_logout">Logout</a>
                 </form>
             </span>
@@ -57,7 +57,7 @@
                     <caption>
                         <div style="display: flex; justify-content: space-between; width: 100%">
                             <span style="text-align: left; font-size: 18px;">My Assigned Treks</span> <span
-                                style="text-align:right;"><a href="{{ url_for('staff_manage_treks') }}" class="button">
+                                style="text-align:right;"><a href="{{ url_for('staff_manage_treks') }}" >
                                     <button type="button">Manage all</button></a></span>
                         </div>
                     </caption>

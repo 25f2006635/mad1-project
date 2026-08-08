@@ -49,7 +49,7 @@ class Staff(db.Model):
     full_name = db.Column(db.String, nullable=False)
     address = db.Column(db.String, nullable=False)
     phone_no = db.Column(db.String(15), nullable=False)
-    status = db.Column(db.Integer, nullable=False, default=0)  #0-registered, 1-approved, 2-rejected, 3-deactivated, 4- blacklisted
+    status = db.Column(db.Integer, nullable=False, default=0)  #0-registered, 1-approved, 2-rejected, 4- blacklisted
     treks = db.relationship("Trek", backref="assigned_staff")
 
 class Bookings(db.Model):

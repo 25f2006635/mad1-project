@@ -17,7 +17,7 @@
             <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, Admin!</span>
             <span style="text-align: right;">
                 <form action="{{ url_for('search') }}" method="GET">
-                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 250px">
                     <input type="submit" value="Search"> | <a href="/admin_logout">Logout</a>
                 </form>
             </span>
@@ -108,7 +108,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                    <td><a href="{{ url_for('manage_treks') }}" class="button"><button
+                                    <td><a href="{{ url_for('manage_treks') }}" ><button
                                                 type="button">Cancel</button></a></td>
                                     </td>
                                     <td><button type="submit">Save</button></td>

@@ -2,7 +2,8 @@ from datetime import datetime, date
 from flask import render_template, request, redirect, url_for, session
 from flask import current_app as app
 from models import *
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import cast, String, or_
 
 
 @app.route('/')
@@ -39,10 +40,11 @@ def staff_signin():
                 elif staff.status == 0:
                     return ("Your account registration is still pending approval!")
                 elif staff.status == 2:
-                    return ("Your staff application has been rejected.")
+                    return ("Your staff application has been rejected. Try again next time with different mail-id.")
                 elif staff.status == 3:
                     return ("This account has been blacklisted. Access denied!")
-            return redirect(url_for('staff_dash'))
+            else:
+                return ("Staff profile not found!")
         else:
             return ("You are not a Staff, please register yourself first!")
     return render_template('staff_login.html')
@@ -54,9 +56,17 @@ def user_signin():
         pwd = request.form.get("pwd")
         user=db.session.query(User_Details).filter(User_Details.email==uname, User_Details.password==pwd).first()
         if user and user.role==2:
-            login_user(user)
-            session['user_id'] = user.user_id
-            return redirect(url_for('user_dash'))
+            trekker = db.session.query(Trekker).filter(Trekker.user_id == user.user_id).first()
+            if trekker:
+                if trekker.status != 2:
+                    login_user(user)
+                    session['user_id'] = user.user_id
+                    session['trekker_id'] = trekker.trekker_id
+                    return redirect(url_for('user_dash'))
+                elif trekker.status == 2:
+                    return ("This account has been blacklisted. Access denied!")
+            else:
+                return ("Trekker profile not found!")
         else:
             return ("You are not an User, please register yourself first!")
     return render_template('user_login.html')
@@ -101,7 +111,7 @@ def register():
 @login_required
 def admin_dash():
     total_treks = Trek.query.filter(Trek.status != 4).count()
-    total_users = Trekker.query.filter_by(status=0).count()
+    total_users = Trekker.query.filter(Trekker.status != 2).count()
     total_staff = Staff.query.filter_by(status=1).count()
     total_bookings = Bookings.query.count()
 
@@ -176,8 +186,8 @@ def manage_users():
                 
             db.session.commit()
         return redirect(url_for('manage_users'))
-    active_trekkers = db.session.query(Trekker).filter(Trekker.status == 0).all()
-    history_trekkers = db.session.query(Trekker).filter(Trekker.status != 0).all()
+    active_trekkers = db.session.query(Trekker).filter(Trekker.status != 2).all()
+    history_trekkers = db.session.query(Trekker).filter(Trekker.status == 2).all()
     return render_template('manage_users.html', active_trekkers=active_trekkers, history_trekkers=history_trekkers)
 
 
@@ -392,13 +402,20 @@ def user_dash():
         return redirect(url_for('user_signin'))
 
     booked_trek_ids = [b.trek_id for b in Bookings.query.filter_by(trekker_id=trekker.trekker_id).filter(Bookings.status != 1).all()]
-    all_active_treks = Trek.query.filter(Trek.status == 0, Trek.av_slots > 0)
+    all_active_treks = Trek.query.filter(Trek.status == 1, Trek.av_slots > 0)
     unbooked_treks = [t for t in all_active_treks if t.trek_id not in booked_trek_ids]
     available_treks_count = len(unbooked_treks)
     available_treks = unbooked_treks[:3]
 
-    my_bookings_count = Bookings.query.filter_by(trekker_id=trekker.trekker_id, status=0).count()
-    completed_treks_count = Bookings.query.filter_by(trekker_id=trekker.trekker_id, status=2).count()
+    my_bookings_count = Bookings.query.join(Trek).filter(
+        Bookings.trekker_id == trekker.trekker_id,
+        Bookings.status == 0,
+        Trek.status == 1
+    ).count()
+    completed_treks_count = Bookings.query.join(Trek).filter(
+        Bookings.trekker_id == trekker.trekker_id,
+        (Bookings.status == 2) | (Trek.status == 3)
+    ).count()
    
     return render_template("user_dash.html", user_name=trekker.full_name, available_treks_count=available_treks_count,
         my_bookings_count=my_bookings_count, completed_treks_count=completed_treks_count, available_treks=available_treks)
@@ -417,30 +434,48 @@ def browse_treks():
 
     selected_loc = request.args.get('locn', 'All')
     selected_diff = request.args.get('diff', 'All')
-    booked_trek_ids = [
-            b.trek_id for b in Bookings.query.filter_by(trekker_id=trekker.trekker_id).filter(Bookings.status != 1).all()
-        ]
-    query = Trek.query.filter(Trek.status == 0, Trek.av_slots > 0, ~Trek.trek_id.in_(booked_trek_ids))
-    unbooked_treks = query.all()
-    locations = sorted(list({t.location for t in unbooked_treks if t.location}))
 
-    if selected_loc and selected_loc != 'All':
+    # Get active booked trek IDs
+    booked_trek_ids = [
+        b.trek_id for b in Bookings.query.filter_by(trekker_id=trekker.trekker_id).filter(Bookings.status != 1).all()
+    ]
+
+    query = Trek.query.filter(Trek.status == 1)
+
+    if booked_trek_ids:
+        query = query.filter(~Trek.trek_id.in_(booked_trek_ids))
+
+    all_open = query.all()
+    locations = sorted(list({t.location for t in all_open if t.location}))
+
+    if selected_loc and 'All' not in selected_loc:
         query = query.filter(Trek.location == selected_loc)
-    if selected_diff and selected_diff != 'All':
+
+    if selected_diff and 'All' not in selected_diff:
         diff_map = {
-            '0': [0, 'Easy'],
-            '1': [1, 'Moderate'],
-            '2': [2, 'Hard']
+            '0': ['Easy', 0, '0'],
+            '1': ['Moderate', 1, '1'],
+            '2': ['Hard', 2, '2'],
+            'Easy': ['Easy', 0, '0'],
+            'Moderate': ['Moderate', 1, '1'],
+            'Hard': ['Hard', 2, '2']
         }
         if selected_diff in diff_map:
             query = query.filter(Trek.difficulty.in_(diff_map[selected_diff]))
+        else:
+            query = query.filter(Trek.difficulty == selected_diff)
 
     available_treks = query.all()
-    # locations = [loc[0] for loc in db.session.query(Trek.location).filter(Trek.status == 0, Trek.av_slots > 0).distinct().all() if loc[0]]
 
-    return render_template("user_browse_treks.html",user_name=trekker.full_name, available_treks=available_treks, 
-                           locations=locations, selected_loc=selected_loc, selected_diff=selected_diff, booked_trek_ids=booked_trek_ids)
-
+    return render_template(
+        "user_browse_treks.html",
+        user_name=trekker.full_name,
+        available_treks=available_treks,
+        locations=locations,
+        selected_loc=selected_loc,
+        selected_diff=selected_diff,
+        booked_trek_ids=booked_trek_ids
+    )
 
 @app.route('/book_trek/<int:trek_id>', methods=['POST'])
 @login_required
@@ -458,7 +493,7 @@ def book_trek(trek_id):
 
     trek = Trek.query.get_or_404(trek_id)
 
-    if trek.status == 0 and trek.av_slots > 0:
+    if trek.status == 1 and trek.av_slots > 0:
         trek.av_slots -= 1
 
         new_booking = Bookings(trekker_id=trekker.trekker_id, trek_id=trek_id, booking_date=date.today(), status=0, payment_status=0)
@@ -479,7 +514,11 @@ def my_bookings():
     trekker = Trekker.query.filter_by(user_id=user_id).first()
     if not trekker:
         return redirect(url_for('user_signin'))
-    active_bookings = Bookings.query.filter(Bookings.trekker_id == trekker.trekker_id, Bookings.status == 0).all()
+    active_bookings = Bookings.query.join(Trek).filter(
+        Bookings.trekker_id == trekker.trekker_id,
+        Bookings.status == 0,
+        Trek.status == 1
+    ).all()
     return render_template('user_bookings.html', user_name=trekker.full_name, user_bookings=active_bookings)
 
 
@@ -518,7 +557,10 @@ def my_history():
     trekker = Trekker.query.filter_by(user_id=user_id).first()
     if not trekker:
         return redirect(url_for('user_signin'))
-    history_bookings = Bookings.query.filter(Bookings.trekker_id == trekker.trekker_id, Bookings.status.in_([1, 2])).all()
+    history_bookings = Bookings.query.join(Trek).filter(
+        Bookings.trekker_id == trekker.trekker_id,
+        (Bookings.status != 0) | (Trek.status != 1)
+    ).all()
     return render_template("user_history.html", user_name=trekker.full_name, bookings=history_bookings)
 
 @app.route('/my_profile')
@@ -557,19 +599,33 @@ def user_edit_profile():
 
 
 @app.route('/search')
+@login_required
 def search():
     query = request.args.get('q', '').strip()
-    results = []
 
-    if query:
-        pattern = f'%{query}%'
-        for model in [User_Details, Staff, Trekker, Bookings, Trek]:
-            mapper = db.inspect(model)
-            filters = [db.cast(col, db.String).ilike(pattern) for col in mapper.columns]
-            if filters:
-              matches = model.query.filter(db.or_(*filters)).all()
-              results.extend(matches)
-    return render_template('results.html', query=query, results=results, getattr=getattr)
+    results = {'treks': [],'staff': [], 'users': [], 'bookings': []}
+    if not query:
+        return render_template('results.html', results=results, query=query)
+
+    pattern = f"%{query}%"
+    role = current_user.role
+
+    if role == 0:
+        results['treks'] = Trek.query.filter(db.or_(Trek.trek_name.ilike(pattern),cast(Trek.trek_id, String).ilike(pattern))).all()
+        results['staff'] = Staff.query.filter(db.or_(Staff.full_name.ilike(pattern), cast(Staff.staff_id, String).ilike(pattern))).all()
+        results['users'] = User_Details.query.outerjoin(Trekker).filter(db.or_(User_Details.email.ilike(pattern),cast(User_Details.user_id, String).ilike(pattern),Trekker.full_name.ilike(pattern))).all()
+        results['bookings'] = Bookings.query.filter(cast(Bookings.booking_id, String).ilike(pattern)).all()
+    elif role == 1 :
+        staff_record = current_user.staff
+        if staff_record:
+            results['treks'] = Trek.query.filter(Trek.staff_assigned == staff_record.staff_id,db.or_(Trek.trek_name.ilike(pattern),cast(Trek.trek_id, String).ilike(pattern))).all()
+            results['bookings'] = Bookings.query.join(Trek).join(Trekker).filter(Trek.staff_assigned == staff_record.staff_id,db.or_(cast(Bookings.booking_id, String).ilike(pattern),Trekker.full_name.ilike(pattern))).all()
+    else:
+        results['treks'] = Trek.query.filter(
+            Trek.status == 0, db.or_( Trek.trek_name.ilike(pattern),Trek.location.ilike(pattern))).all()
+        
+    return render_template('results.html', query=query, results=results)
+
 
 @app.route('/admin_logout')
 def admin_logout():

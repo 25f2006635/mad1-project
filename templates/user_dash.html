@@ -17,7 +17,7 @@
             <span style="text-align: left; color: cornsilk; font-size: 20px;">Hello, {{ user_name }} !</span>
             <span style="text-align: right;">
                 <form action="{{ url_for('search') }}" method="GET">
-                    <input type="text" name="q" placeholder="Search Treks, Staff or Users..." style="width: 200px">
+                    <input type="text" name="q" placeholder="Search treks by name or location..." style="width: 250px">
                     <input type="submit" value="Search"> | <a href="/user_logout">Logout</a>
                 </form>
             </span>
@@ -59,7 +59,7 @@
                     <caption>
                         <div style="display: flex; justify-content: space-between; width: 100%">
                             <span style="text-align: left; font-size: 18px;">Available Treks</span> <span
-                                style="text-align:right;"><a href="{{ url_for('browse_treks') }}" class="button"><button
+                                style="text-align:right;"><a href="{{ url_for('browse_treks') }}" ><button
                                         type="button">View all</button></a></span>
                         </div>
                     </caption>
