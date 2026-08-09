@@ -42,6 +42,7 @@
                         <th>Trek Name</th>
                         <th>Trek Dates</th>
                         <th>Completed On</th>
+                        <th>Payment Status</th>
                         <th>Status</th>
                     </tr>
                     {% if bookings %}
@@ -55,6 +56,12 @@
                             {{ booking.trek.en_date.strftime('%d-%b-%Y') }}
                             {% else %}
                             N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.payment_status == 1 %}Paid
+                            {% elif booking.payment_status == 2 %}Refunded
+                            {% else %}Pending
                             {% endif %}
                         </td>
                         <td>

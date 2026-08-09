@@ -627,6 +627,20 @@ def search():
     return render_template('results.html', query=query, results=results)
 
 
+@app.route('/update_payment_status/<int:booking_id>', methods=['POST'])
+@login_required
+def update_payment_status(booking_id):
+    booking = Bookings.query.get_or_404(booking_id)
+    
+    new_status = request.form.get('payment_status', type=int)
+    
+    if new_status is not None and new_status in [0, 1, 2]:
+        booking.payment_status = new_status
+        db.session.commit()
+        
+    return redirect(request.referrer or url_for('admin_dash'))
+
+
 @app.route('/admin_logout')
 def admin_logout():
     logout_user()

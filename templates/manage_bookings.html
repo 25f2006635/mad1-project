@@ -46,7 +46,7 @@
                     <tr>
                         <th>Booking ID</th>
                         <th>Trekker ID</th>
-                        <th>Trek ID</th>
+                        <th>Trek Name</th>
                         <th>Booking Date</th>
                         <th>Booking Status</th>
                         <th>Payment Status</th>
@@ -55,15 +55,20 @@
                     <tr>
                         <td>{{ b.booking_id }}</td>
                         <td>{{ b.trekker_id }}</td>
-                        <td>{{ b.trek_id }}</td>
+                        <td>{{ b.trek.trek_name }}</td>
                         <td>{{ b.booking_date }}</td>
                         <td>Booked</td>
                         <td>
-                            {% if b.payment_status == 0 %}
-                            <span>Pending</span>
-                            {% elif b.payment_status == 1 %}
-                            <span>Paid</span>
-                            {% endif %}
+                            <form action="{{ url_for('update_payment_status', booking_id=b.booking_id) }}"
+                                method="POST" style="display: flex; gap: 4px;">
+                                <select name="payment_status" class="status-dropdown">
+                                    <option value="0" {% if b.payment_status==0 %}selected{% endif %}>Pending
+                                    </option>
+                                    <option value="1" {% if b.payment_status==1 %}selected{% endif %}>Paid
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn-save">Save</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -80,7 +85,7 @@
                     <tr>
                         <th>Booking ID</th>
                         <th>Trekker ID</th>
-                        <th>Trek ID</th>
+                        <th>Trek Name</th>
                         <th>Booking Date</th>
                         <th>Booking Status</th>
                         <th>Payment Status</th>
@@ -89,7 +94,7 @@
                     <tr>
                         <td>{{ b.booking_id }}</td>
                         <td>{{ b.trekker_id }}</td>
-                        <td>{{ b.trek_id }}</td>
+                        <td>{{ b.trek.trek_name }}</td>
                         <td>{{ b.booking_date }}</td>
                         <td>
                             {% if b.status == 1 %}
@@ -99,13 +104,18 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if b.payment_status == 0 %}
-                            <span>Pending</span>
-                            {% elif b.payment_status == 1 %}
-                            <span>Paid</span>
-                            {% elif b.payment_status == 2 %}
-                            <span>Refunded</span>
-                            {% endif %}
+                            <form action="{{ url_for('update_payment_status', booking_id=b.booking_id) }}"
+                                method="POST" style="display: flex; gap: 4px;">
+                                <select name="payment_status" class="status-dropdown">
+                                    <option value="0" {% if b.payment_status==0 %}selected{% endif %}>Pending
+                                    </option>
+                                    <option value="1" {% if b.payment_status==1 %}selected{% endif %}>Paid
+                                    </option>
+                                    <option value="2" {% if b.payment_status==2 %}selected{% endif %}>Refunded
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn-save">Save</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
